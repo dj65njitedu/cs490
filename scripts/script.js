@@ -1,6 +1,7 @@
 
 var runOnce = false;
 var username;
+var openEnded;
 
 $( document ).ready(function() {
 	getUserRole();
@@ -61,8 +62,28 @@ $( document ).ready(function() {
 	});
 	
 	$("#oe").click(function(){
-		var openEndedHtml = '<div id="openEndedDiv" style="padding:20px"><table><tr><td>Enter Question Here </td><td><div><textarea cols="85" rows="15"></textarea></div></td></tr><tr><td><br></td><td><br></td></tr><tr><td>Enter Answer Here </td><td><div><textarea cols="85" rows="15"></textarea></div></td></tr><tr><td></td><td style="float:right"><input type="submit"></input></td></tr></table></div>';
-		$("#rightPanel").html(openEndedHtml);	
+		var openEndedHtml = '<div id="openEndedDiv" style="padding:20px"><table><tr><td>Enter Question Here </td><td><div><textarea id="code" cols="85" rows="15"></textarea></div><div id="codeResponse" style="display:block"></div></td></tr><tr><td></td><td style="text-align:right"><button id="runCode">Run Code</button></td><tr><td><br></td><td><br></td></tr></tr><tr><td>Enter Answer Here </td><td><div><textarea cols="85" rows="15"></textarea></div></td></tr><tr><td></td><td style="float:right"><input type="submit"></input></td></tr></table></div>';
+		$("#rightPanel").html(openEndedHtml);
+		$("#runCode").click(function(){
+			//alert($('#code').val());
+			
+				var ajaxRequest = $.ajax({
+				url:'?method=compiler&param1='+ $('#code').val(), 
+				success:function(){
+					//alert(ajaxRequest.responseText);
+					//alert(result[0]['username']);
+					//$('#code').val() = html(ajaxRequest.responseText);
+					$("#codeResponse").html(ajaxRequest.responseText);
+					//getElementById('codeResponse').value = ajaxRequest.responseText;
+					//alert(ajaxRequest.responseText);
+				}
+
+
+			});
+				/*$.post( "", { compiler: $('#code').val()}).done(function( data ) {
+					alert( "Data Loaded: " + data );
+				});*/
+		});
 	});
 	
 	$("#makeTest").click(function(){

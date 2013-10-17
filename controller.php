@@ -86,4 +86,13 @@ function returnCourses(){
 	echo file_get_contents('http://web.njit.edu/~cem6/dblogin.php?method=returnCourses');
 }
 
+function compiler($someCode){
+	echo '<pre>'.shell_exec('java Compiler '.'\''.$someCode.'\'').'</pre>';
+}
+
+function runCode($param){
+	//echo 
+	echo compiler($_POST['code']);
+}
+
 ?>
