@@ -4,6 +4,7 @@ var username;
 var openEnded;
 
 $( document ).ready(function() {
+	$("#loading").hide();
 	getUserRole();
 	allButtonsHide();
 	getUserRole();
@@ -66,9 +67,9 @@ $( document ).ready(function() {
 		$("#rightPanel").html(openEndedHtml);
 		$("#runCode").click(function(){
 			//alert($('#code').val());
-			
+				$("#loading").show();
 				var ajaxRequest = $.ajax({
-				url:'?method=compiler&param1='+ $('#code').val(), 
+				url:'?method=compiler&param1='+ htmlEncoder($('#code').val()), 
 				success:function(){
 					//alert(ajaxRequest.responseText);
 					//alert(result[0]['username']);
@@ -76,6 +77,7 @@ $( document ).ready(function() {
 					$("#codeResponse").html(ajaxRequest.responseText);
 					//getElementById('codeResponse').value = ajaxRequest.responseText;
 					//alert(ajaxRequest.responseText);
+					$("#loading").hide();
 				}
 
 
@@ -160,6 +162,31 @@ function countProperties(obj) {
 	}
 
 	return count;
+}
+
+function htmlEncoder(someString){
+	var returnString = "";
+	for(var i = 0;i < someString.length; ++i){
+		if(someString[i] == " "){
+			returnString += "^";
+		}
+		else if(someString[i] == "&"){
+			returnString += "%26";
+		}
+		else if(someString[i] == "#"){
+			returnString += "%23";
+		}
+		else if(someString[i] == "'"){
+			returnString += "%27";
+		}	
+		else if(someString[i] == "^"){
+			returnString += "djkgivmmlfm";
+		}		
+		else{
+			returnString += someString[i];
+		}
+	}
+	return encodeURIComponent(returnString);
 }
 
 //Ajax template

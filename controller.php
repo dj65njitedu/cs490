@@ -87,12 +87,19 @@ function returnCourses(){
 }
 
 function compiler($someCode){
-	echo '<pre>'.shell_exec('java Compiler '.'\''.$someCode.'\'').'</pre>';
+	echo '<pre>'.shell_exec('java Compiler '.'\''.htmlDecoder($someCode).'\'').'</pre>';
+	//echo htmlDecoder($someCode);
+	//echo "<br><br>".str_replace("djkgivmmlfm","^",str_replace("^"," ",str_replace("_"," ",str_replace(" ", "+",$someCode))));
+	//echo "<br><br>".$someCode;
 }
 
 function runCode($param){
 	//echo 
 	echo compiler($_POST['code']);
+}
+
+function htmlDecoder($someString){
+	return rawurldecode(str_replace("djkgivmmlfm","^",str_replace("^"," ",str_replace("_"," ",str_replace(" ", "+",$someString)))));
 }
 
 ?>

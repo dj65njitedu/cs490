@@ -34,13 +34,13 @@ else{
 }
 
 
-//Compiles the code passed to it. If it has an error message will be returned, 
-//otherwise the compile program will be ran and the results will be returned
+//Compiles the code passed to it. If it has an error message it will be returned, 
+//otherwise the compiled program will be ran and the results will be returned
 function compiler($someCode){
 	return '<pre>'.shell_exec('java Compiler '.'\''.$someCode.'\'').'</pre>';
 }
 
-//Reads files directly from the server. Outputs there content to the screen
+//Reads files directly from the server. Outputs their content to the screen
 function readLocalFile($filePath){ 
 	$lines = file($filePath);
 	echo '<pre>';

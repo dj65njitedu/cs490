@@ -47,6 +47,7 @@ global $userName, $loginMessage, $homePage, $inDBPage;
 			<script type="text/javascript" src="scripts/script.js"></script>			
 		</head>
 		<body>
+			<div id="loading" ><img src="http://code.jquery.com/mobile/1.2.0/images/ajax-loader.gif"></div>
 			<div id="container" class="shadow" >
 				<div id="head2">
 					Welcome '.$userName.'
