@@ -87,7 +87,7 @@ function returnCourses(){
 }
 
 function compiler($someCode){
-	echo '<pre>'.shell_exec('java Compiler '.'\''.htmlDecoder($someCode).'\'').'</pre>';
+	echo '<pre>'.str_replace("/afs/cad/u/d/j/dj65/public_html/cs490/output/sourceCode.java:","",shell_exec('java Compiler '.'\''.htmlDecoder($someCode).'\'')).'</pre>';
 	//echo htmlDecoder($someCode);
 	//echo "<br><br>".str_replace("djkgivmmlfm","^",str_replace("^"," ",str_replace("_"," ",str_replace(" ", "+",$someCode))));
 	//echo "<br><br>".$someCode;
