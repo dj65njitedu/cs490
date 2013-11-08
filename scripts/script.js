@@ -10,46 +10,95 @@ $( document ).ready(function() {
 	getUserRole();
 	$("#addQuestions").click(function(){
 		allButtonsSlideUp();
-		$("#addQuestionsDropDown").slideDown();
-		var htmlCourseBuilder;
-		//This string will be built from results from the server (in this case the results are simulated)				
-		htmlCourseBuilder = '<div id="courseSelect"><table><tr><td>Choose the desired course</td></tr><tr><td><select>';
-		
-		var ajaxRequest = $.ajax({
-			url:'?method=returnCourses', 
-			success:function(){
-			result = JSON.parse(ajaxRequest.responseText);
-				//alert(ajaxRequest.responseText);
-				//alert(result[0]['username']);
-				for(var i = 0;i < countProperties(result);++i){
-					//alert(result[i]['cname']);
-					htmlCourseBuilder += '<option value="'+result[i]['cname']+'">'+result[i]['cname']+'</option>';
+		if($("#addQuestionsDropDown").is(":visible")){
+			$("#addQuestionsDropDown").slideUp();
+		}else{
+			$("#addQuestionsDropDown").slideDown();
+			
+			var htmlCourseBuilder;
+			//This string will be built from results from the server (in this case the results are simulated)				
+			htmlCourseBuilder = '<div id="courseSelect"><table><tr><td>Choose the desired course</td></tr><tr><td><select>';
+			
+			var ajaxRequest = $.ajax({
+				url:'?method=returnCourses', 
+				success:function(){
+				result = JSON.parse(ajaxRequest.responseText);
+					//alert(ajaxRequest.responseText);
+					//alert(result[0]['username']);
+					for(var i = 0;i < countProperties(result);++i){
+						//alert(result[i]['cname']);
+						htmlCourseBuilder += '<option value="'+result[i]['cname']+'">'+result[i]['cname']+'</option>';
+					}
+					htmlCourseBuilder += '</select></td></tr></table></div><br>';
+					if(runOnce == false){
+						$('#multipleChoice').prepend(htmlCourseBuilder);
+						runOnce = true;
+					}
 				}
-				htmlCourseBuilder += '</select></td></tr></table></div><br>';
-				if(runOnce == false){
-					$('#multipleChoice').prepend(htmlCourseBuilder);
-					runOnce = true;
-				}
-			}
-		});
-		
+			});
+		}		
+
 						
 	});
 	$("#makeTest").click(function(){
 		allButtonsSlideUp();
-		$("#makeTestDropDown").slideDown();
+		if($("#makeTestDropDown").is(":visible")){
+			$("#makeTestDropDown").slideUp();
+		}else{
+			$("#makeTestDropDown").slideDown();
+			var makeTestHtml = '<div id="makeTestCourseSelect"><table><tr><td>Choose where the questions will come from</td></tr><tr><td><select id="makeTestSelection">';
+			var ajaxRequest = $.ajax({
+				url:'?method=returnCourses', 
+				success:function(){
+				result = JSON.parse(ajaxRequest.responseText);
+					//alert(ajaxRequest.responseText);
+					//alert(result[0]['username']);
+					for(var i = 0;i < countProperties(result);++i){
+						//alert(result[i]['cname']);
+						makeTestHtml += '<option value="'+result[i]['cname']+'">'+result[i]['cname']+'</option>';
+					}
+					makeTestHtml += '</select></td></tr></table></div><br>';
+					$('#makeTestDropDown').html(makeTestHtml);
+				}
+			});
+			$("#makeTestDropDown").html(makeTestHtml);	
+			//$("#rightPanel").html(openEndedHtml);				
+			
+		}
 	});
+	
 	$("#GetReport").click(function(){
 		allButtonsSlideUp();
-		$("#GetReportDropDown").slideDown();
+		if($("#GetReportDropDown").is(":visible")){
+			$("#GetReportDropDown").slideUp();
+		}else{
+			$("#GetReportDropDown").slideDown();
+			
+			//Code goes here
+			
+		}			
 	});
 	$("#seeTest").click(function(){
 		allButtonsSlideUp();
-		$("#seeTestDropDown").slideDown();
+		if($("#seeTestDropDown").is(":visible")){
+			$("#seeTestDropDown").slideUp();
+		}else{
+			$("#seeTestDropDown").slideDown();
+			
+			//Code goes here
+			
+		}		
 	});
 	$("#seeHistory").click(function(){
 		allButtonsSlideUp();
-		$("#seeHistoryDropDown").slideDown();
+		if($("#seeHistoryDropDown").is(":visible")){
+			$("#seeHistoryDropDown").slideUp();
+		}else{
+			$("#seeHistoryDropDown").slideDown();
+			
+			//Code goes here
+			
+		}			
 	});
 	
 	$("#mc").click(function(){
@@ -86,27 +135,6 @@ $( document ).ready(function() {
 					alert( "Data Loaded: " + data );
 				});*/
 		});
-	});
-	
-	$("#makeTest").click(function(){
-		//Ajax request will go here
-		var makeTestHtml = '<div id="makeTestCourseSelect"><table><tr><td>Choose where the questions will come from</td></tr><tr><td><select id="makeTestSelection">';
-		var ajaxRequest = $.ajax({
-			url:'?method=returnCourses', 
-			success:function(){
-			result = JSON.parse(ajaxRequest.responseText);
-				//alert(ajaxRequest.responseText);
-				//alert(result[0]['username']);
-				for(var i = 0;i < countProperties(result);++i){
-					//alert(result[i]['cname']);
-					makeTestHtml += '<option value="'+result[i]['cname']+'">'+result[i]['cname']+'</option>';
-				}
-				makeTestHtml += '</select></td></tr></table></div><br>';
-				$('#makeTestDropDown').html(makeTestHtml);
-			}
-		});
-		$("#makeTestDropDown").html(makeTestHtml);	
-		//$("#rightPanel").html(openEndedHtml);	
 	});
  
 });
