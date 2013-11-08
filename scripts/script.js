@@ -13,6 +13,7 @@ $( document ).ready(function() {
 		if($("#addQuestionsDropDown").is(":visible")){
 			$("#addQuestionsDropDown").slideUp();
 		}else{
+			$(this).addClass("button2").removeClass("button");
 			$("#addQuestionsDropDown").slideDown();
 			
 			var htmlCourseBuilder;
@@ -45,6 +46,7 @@ $( document ).ready(function() {
 		if($("#makeTestDropDown").is(":visible")){
 			$("#makeTestDropDown").slideUp();
 		}else{
+			$(this).addClass("button2").removeClass("button");
 			$("#makeTestDropDown").slideDown();
 			var makeTestHtml = '<div id="makeTestCourseSelect"><table><tr><td>Choose where the questions will come from</td></tr><tr><td><select id="makeTestSelection">';
 			var ajaxRequest = $.ajax({
@@ -72,6 +74,7 @@ $( document ).ready(function() {
 		if($("#GetReportDropDown").is(":visible")){
 			$("#GetReportDropDown").slideUp();
 		}else{
+			$(this).addClass("button2").removeClass("button");
 			$("#GetReportDropDown").slideDown();
 			
 			//Code goes here
@@ -83,6 +86,7 @@ $( document ).ready(function() {
 		if($("#seeTestDropDown").is(":visible")){
 			$("#seeTestDropDown").slideUp();
 		}else{
+			$(this).addClass("button2").removeClass("button");
 			$("#seeTestDropDown").slideDown();
 			
 			//Code goes here
@@ -145,6 +149,11 @@ function allButtonsSlideUp(){
 		$("#GetReportDropDown").slideUp();
 		$("#seeTestDropDown").slideUp();
 		$("#seeHistoryDropDown").slideUp();
+		$("#seeTest").addClass("button").removeClass("button2");
+		$("#seeHistory").addClass("button").removeClass("button2");
+		$("#addQuestions").addClass("button").removeClass("button2");
+		$("#makeTest").addClass("button").removeClass("button2");
+		$("#GetReport").addClass("button").removeClass("button2");
 }
 
 function allButtonsHide(){

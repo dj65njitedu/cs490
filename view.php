@@ -59,7 +59,7 @@ global $userName, $loginMessage, $homePage, $inDBPage;
 					</form>
 				</div>
 				<div id="leftPanel">
-					<div id="addQuestions" class="button">Add Questions to Question Bank</div>
+					<div id="addQuestions" class="button">Add Questions to Bank</div>
 					<div id="addQuestionsDropDown" class="buttonDropDown">
 						<div id="multipleChoice">
 							<table>	
