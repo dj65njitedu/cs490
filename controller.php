@@ -2,6 +2,8 @@
 //Author: Desmond Johnson CS:490 Date: 10/12/13
 
 $resultsArray = Array();
+$dbServerAddress = 'http://web.njit.edu/~cem6/dblogin.php';
+
 
 if(isset($_GET['method'])){	
 	$method = $_GET['method'];
@@ -18,8 +20,8 @@ if((isset($_POST['user'])) && (isset($_POST['pwd'])) )
 		$resultsArray['loginStatus'] = ""; 
 		
 		if ($ldapbind) {
-			$url = 'http://web.njit.edu/~cem6/dblogin.php?user='.$_POST['user'];
-			//$url = 'http://web.njit.edu/~cem6/dblogin.php?user=cem6';
+			$url = $GLOBALS['dbServerAddress'].'?user='.$_POST['user'];
+			//$url = $GLOBALS['dbServerAddress'].'?user=cem6';
 			$postdata = $_POST;
 			$c = curl_init();
 			curl_setopt($c, CURLOPT_HTTPHEADER, array('Content-Type' => 'text/plain'));
@@ -79,11 +81,11 @@ function someMadeUpMethod($param){
 }
 
 function getUserRole($param){
-	echo file_get_contents('http://web.njit.edu/~cem6/dblogin.php?method=checkRole&param1='.$param);
+	echo file_get_contents($GLOBALS['dbServerAddress'].'?method=checkRole&param1='.$param);
 } 
 
 function returnCourses(){
-	echo file_get_contents('http://web.njit.edu/~cem6/dblogin.php?method=returnCourses');
+	echo file_get_contents($GLOBALS['dbServerAddress'].'?method=returnCourses');
 }
 
 function compiler($someCode){
@@ -101,5 +103,19 @@ function runCode($param){
 function htmlDecoder($someString){
 	return rawurldecode(str_replace("djkgivmmlfm","^",str_replace("^"," ",str_replace("_"," ",str_replace(" ", "+",$someString)))));
 }
+
+
+///////////////////////////////////////
+//functions for dblogin.php, to be copied and pasted directly there
+
+function getQuestionsByCourse($param){
+	//$param will be a number from 1 through 3
+	$query = "SELECT DISTINCT qb.id, qb.question FROM CS_QUESTION_ANSWER_PAIRS qap, QUESTION_BANK qb, ANSWER_BANK ab WHERE qap.courseID = '".$param."' AND qap.id = qb.id";
+	queryDB($query);
+}
+
+
+
+//////////////////////////////////////
 
 ?>

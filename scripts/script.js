@@ -190,6 +190,13 @@ function getUserRole(){
 			});
 }
 
+function getQuestionsByCourse(course){
+	var resultsAsHTML = "";
+	//Ajax call will use the course, get the results, build html from it, and return the html.
+	//the return clause will be in the AJAX success function 
+	//return resultsAsHTML;
+}
+
 function countProperties(obj) {
 	var count = 0;
 
