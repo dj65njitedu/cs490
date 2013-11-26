@@ -2,7 +2,7 @@
 //Author: Desmond Johnson CS:490 Date: 10/12/13
 
 $resultsArray = Array();
-$dbServerAddress = 'http://web.njit.edu/~cem6/dblogin.php';
+$dbServerAddress = 'http://web.njit.edu/~cem6/dblogin3.php';
 
 
 if(isset($_GET['method'])){	
@@ -102,6 +102,10 @@ function runCode($param){
 
 function htmlDecoder($someString){
 	return rawurldecode(str_replace("djkgivmmlfm","^",str_replace("^"," ",str_replace("_"," ",str_replace(" ", "+",$someString)))));
+}
+
+function getExamByID($ID){
+	echo file_get_contents($GLOBALS['dbServerAddress'].'?method=getExamByID'.'&param1='.$ID);
 }
 
 
