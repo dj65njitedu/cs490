@@ -108,6 +108,24 @@ function getExamByID($ID){
 	echo file_get_contents($GLOBALS['dbServerAddress'].'?method=getExamByID'.'&param1='.$ID);
 }
 
+function dateToMinutes($date){
+	$minDiff = $date->format('i');
+	$hourDiff = $date->format('H');
+	$dayDiff = $date->format('d');
+	$monthDiff = $date->format('m');
+	$yearDiff = $date->format('Y');
+	return ($date * 12 * 3600 * 30) + ($monthDiff * 3600 * 30) + ($dayDiff * 3600) + ($hourDiff * 60 )+ $minDiff;
+}
+
+function dateDiff($start, $end){
+	$minDiff = ($end->format('i') - $start->format('i'));
+	$hourDiff = ($end->format('H') - $start->format('H'));
+	$dayDiff = ($end->format('d') - $start->format('d'));
+	$monthDiff = ($end->format('m') - $start->format('m'));
+	$yearDiff = ($end->format('Y') - $start->format('Y'));
+	return ($yearDiff * 12 * 3600 * 30) + ($monthDiff * 3600 * 30) + ($dayDiff * 3600) + ($hourDiff * 60 )+ $minDiff;
+}
+
 
 ///////////////////////////////////////
 //functions for dblogin.php, to be copied and pasted directly there
