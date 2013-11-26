@@ -117,7 +117,7 @@ global $userName, $loginMessage, $homePage, $inDBPage;
 						</div>
 					</div>
 					<div id="seeTest" class="button" >See Available Test</div>
-					<div id="seeTestDropDown"class="buttonDropDown">Some dummy text<br>(data from the database will be populated in the main panel)</div>
+					<div id="seeTestDropDown"class="buttonDropDown"><br><br><br><b>Select and exam on the right-></b><br></div>
 					<div id="seeHistory" class="button">See Past Test Results</div>
 					<div id="seeHistoryDropDown" class="buttonDropDown">Some dummy text<br>(data from the database will be populated in the main panel)</div>
 				</div>

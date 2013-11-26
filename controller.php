@@ -104,6 +104,10 @@ function htmlDecoder($someString){
 	return rawurldecode(str_replace("djkgivmmlfm","^",str_replace("^"," ",str_replace("_"," ",str_replace(" ", "+",$someString)))));
 }
 
+function getExamsForStudent($param){
+	echo file_get_contents($GLOBALS['dbServerAddress'].'?method=getExamsForStudent'.'&param1='.$param);
+}
+
 function getExamByID($ID){
 	echo file_get_contents($GLOBALS['dbServerAddress'].'?method=getExamByID'.'&param1='.$ID);
 }
@@ -136,6 +140,19 @@ function getQuestionsByCourse($param){
 	queryDB($query);
 }
 
+function getExamsFor_Student($param){	
+	$query = 'SELECT distinct PROF_EXAMS.id, CS_COURSE.cname, PROF_EXAMS.examopentime, PROF_EXAMS.examclosetime, PROF_EXAMS.examduration
+			FROM PROF_EXAMS, CS_COURSE, CS_ENROLLED
+			WHERE PROF_EXAMS.courseID = CS_COURSE.cid
+			AND CS_ENROLLED.coursenameId
+			IN (
+				SELECT CS_ENROLLED.coursenameID
+				FROM CS_ENROLLED, CS_USERS
+				WHERE CS_ENROLLED.usernameID = CS_USERS.id
+				AND CS_USERS.username =  "'.$param.'")';
+				
+	queryDB($query);		
+}
 
 
 //////////////////////////////////////

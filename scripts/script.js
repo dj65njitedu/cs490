@@ -90,6 +90,52 @@ $( document ).ready(function() {
 			$("#seeTestDropDown").slideDown();
 			
 			//Code goes here
+			var ajaxRequest = $.ajax({
+				url:'?method=getExamsForStudent&param1='+ username, 
+				success:function(){
+					var result = ajaxRequest.responseText;
+					var studentExamsResultsAsHTML = ajaxRequest.responseText;
+					if(result.length <= 4){
+						$("#rightPanel").html("<center>There are no exams available to you at this time</center>");
+					}
+					else{
+						result2 = JSON.parse(result);
+						var tableBuilder = '<div ><table style="margin: 0 auto; width:1000px" border="1"><thead><tr class="crtr"><th>ID</th><th>Course Name</th><th>Exam Open Time</th><th>Exam Close Time</th><th>Exam Duration</th></tr></thead><tbody>'; 
+						for(var i = 0;i<countProperties(result2); ++i){
+							tableBuilder +=  '<tr class="examButtons">';
+							tableBuilder +=  '<td >'+result2[i]['id']+'</td>';
+							tableBuilder +=  '<td>'+result2[i]['cname']+'</td>';
+							tableBuilder +=  '<td>'+result2[i]['examopentime']+'</td>';
+							tableBuilder +=  '<td>'+result2[i]['examclosetime']+'</td>';
+							tableBuilder +=  '<td>'+result2[i]['examduration']+'</td>';
+							tableBuilder +=  '</tr>';	
+						}
+						tableBuilder += '</tbody></table></div>';
+						$("#rightPanel").html(tableBuilder);
+						$("tr").mousedown(function(){
+							var pos = $(this).attr("class");
+							if(pos == "crtr"){}
+							else{
+								alert(this.cells[0]);
+								/*customerID = "";
+								var text = $(this).html();
+								lastName = "";
+								firstName = "";
+								var zCount = 0;
+								for(var i = 0;i < 70; ++i){
+									if(text[i] == '>' ){
+										zCount++;
+										++i;
+									}
+								}
+								*/
+							}
+						});
+					}	
+				}
+
+
+			});
 			
 		}		
 	});
