@@ -115,8 +115,8 @@ $( document ).ready(function() {
 						$("tr").mousedown(function(){
 							var pos = $(this).attr("class");
 							if(pos == "crtr"){}
-							else{
-								alert(this.cells[0]);
+							else{  
+								//alert(countProperties(this.cells[0]));  
 								/*customerID = "";
 								var text = $(this).html();
 								lastName = "";
@@ -129,6 +129,20 @@ $( document ).ready(function() {
 									}
 								}
 								*/
+								var t = '';
+								var stopCapture = false;
+								for(var i = 0;i < this.innerHTML.length; ++i){
+									if((i > 3) && (stopCapture != true)){
+										if(this.innerHTML.charAt(i) != '<'){
+											t += this.innerHTML.charAt(i);
+										}
+										if(this.innerHTML.charAt(i) == '<'){
+											stopCapture = true;
+										}
+									}
+								}
+								$("#rightPanel").html(t);
+								
 							}
 						});
 					}	
