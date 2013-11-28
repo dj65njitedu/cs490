@@ -108,53 +108,97 @@ function getExamsForStudent($param){
 	echo file_get_contents($GLOBALS['dbServerAddress'].'?method=getExamsForStudent'.'&param1='.$param);
 }
 
-function getExamByID($ID){
-	echo file_get_contents($GLOBALS['dbServerAddress'].'?method=getExamByID'.'&param1='.$ID);
+function getStudentExamByID($ID){
+	echo file_get_contents($GLOBALS['dbServerAddress'].'?method=getStudentExamByID'.'&param1='.$ID);
 }
 
-function dateToMinutes($date){
-	$minDiff = $date->format('i');
-	$hourDiff = $date->format('H');
-	$dayDiff = $date->format('d');
-	$monthDiff = $date->format('m');
-	$yearDiff = $date->format('Y');
-	return ($date * 12 * 3600 * 30) + ($monthDiff * 3600 * 30) + ($dayDiff * 3600) + ($hourDiff * 60 )+ $minDiff;
-}
-
-function dateDiff($start, $end){
-	$minDiff = ($end->format('i') - $start->format('i'));
-	$hourDiff = ($end->format('H') - $start->format('H'));
-	$dayDiff = ($end->format('d') - $start->format('d'));
-	$monthDiff = ($end->format('m') - $start->format('m'));
-	$yearDiff = ($end->format('Y') - $start->format('Y'));
-	return ($yearDiff * 12 * 3600 * 30) + ($monthDiff * 3600 * 30) + ($dayDiff * 3600) + ($hourDiff * 60 )+ $minDiff;
+function dateToMinutes($Date){
+	$format = 'Y-m-d H:i:s';
+	$date = DateTime::createFromFormat($format,$Date);
+	$min = $date->format('i');
+	$hour = $date->format('H');
+	$day = $date->format('d');
+	$month = $date->format('m');
+	$year = $date->format('Y');
+	return ($year * 12 * 30 * 24 * 60) + ($month * 30 * 24 * 60) + ($day * 24 * 60) + ($hour * 60 )+ $min;
 }
 
 
-///////////////////////////////////////
-//functions for dblogin.php, to be copied and pasted directly there
+//$query = SELECT id, prof_exams_ID, studentID, starttime, endtime FROM STUDENT_EXAMS WHERE prof_exams_ID = (someIDParam);
+//function name = 'getExamByID';
+function takeExamByID($ID, $username){
+	$examInfoResult = file_get_contents('http://web.njit.edu/~dj65/cs490/dblogin3.php?method=getProfExamByID&param1='.$ID);
+	if(strlen($examInfoResult) > 4){
+		$timeOverStatement = 300;
+		$jsonToPHPArrayResults = json_decode($examInfoResult,true);
+		$examOpenDate =  dateToMinutes($jsonToPHPArrayResults[0]['examopentime']);
+		$examCloseDate =  dateToMinutes($jsonToPHPArrayResults[0]['examclosetime']);
+		$examDuration =  (dateToMinutes('0000-00-00 '.$jsonToPHPArrayResults[0]['examduration']))/60;
+		$currentTime =  dateToMinutes(date("Y-m-d H:i:s")) - $timeOverStatement;
+		echo "examOpenDate: $examOpenDate <br> examCloseDate: $examCloseDate <br> examDuration: $examDuration <br> currentTime: $currentTime<br>";
+		//echo  (dateToMinutes(date("Y-m-d H:i:s")) -  dateToMinutes('2013-11-27 21:30:00'));
 
-function getQuestionsByCourse($param){
-	//$param will be a number from 1 through 3
-	$query = "SELECT DISTINCT qb.id, qb.question FROM CS_QUESTION_ANSWER_PAIRS qap, QUESTION_BANK qb, ANSWER_BANK ab WHERE qap.courseID = '".$param."' AND qap.id = qb.id";
-	queryDB($query);
-}
-
-function getExamsFor_Student($param){	
-	$query = 'SELECT distinct PROF_EXAMS.id, CS_COURSE.cname, PROF_EXAMS.examopentime, PROF_EXAMS.examclosetime, PROF_EXAMS.examduration
-			FROM PROF_EXAMS, CS_COURSE, CS_ENROLLED
-			WHERE PROF_EXAMS.courseID = CS_COURSE.cid
-			AND CS_ENROLLED.coursenameId
-			IN (
-				SELECT CS_ENROLLED.coursenameID
-				FROM CS_ENROLLED, CS_USERS
-				WHERE CS_ENROLLED.usernameID = CS_USERS.id
-				AND CS_USERS.username =  "'.$param.'")';
+		if ($currentTime < $examCloseDate){
+				echo "Your exam will expire in ".($examCloseDate - $currentTime)." minutes";
+				$studentExamInfoResult = file_get_contents('http://web.njit.edu/~dj65/cs490/dblogin3.php?method=getStudentExamByID&param1='.$ID.'&param2='.$username);
+				if(strlen($studentExamInfoResult) > 4){
+					$jsonResult = json_decode($studentExamInfoResult,true);
+					//return all of the questions for that exam
+					//return all of the answers that they previously answered 
+					//echo $jsonResult[0]['endtime'];
+					if(isset($jsonResult[0]['endtime'])){
+						echo 'ended';
+					}else{
+						echo file_get_contents('http://web.njit.edu/~dj65/cs490/dblogin3.php?method=getStudentExamAndAnswersByID&param1='.$ID.'&param2='.$username);
+					}
+				}
+				else{
+					//return all of the questions for that exam
+					echo file_get_contents('http://web.njit.edu/~dj65/cs490/dblogin3.php?method=getProfExamByAndQuestions&param1='.$ID.'&param2='.$username);	 
+					
+					//Start a record for that exam
+					//Insert into(prof_exams_ID, studentID,startTime) into STUDENT_EXAMS VALUES (prof_exams_IDVariable, studentIDVariable,startTimeVariable);
+				}
+			}
+			else{
+				echo "expired";
+			}
 				
-	queryDB($query);		
+				
+				
+	}else{
+		echo 'error';
+	}
+	
+	/*if (((examOpenDate + examDuration) < currentTime) &&  ((currentTime + examDuration) < examCloseDate)){
+
+		if(That Exam does appear in the list of exams that the student has already taken){
+			//return all of the questions for that exam
+			//return all of the answers that they previously answered 
+			if(STUDENT_EXAMS.endtime isset){
+				echo your exams has ended;
+			}else{
+				Select pe.professorID, pe.courseID, pe.examopentime, pe.examclosetime, pe.examduration, qap.typeID, qb.question, qb.id, se.a1, se.a2, se.a3, se.a4, se.a5, se.a6, se.a7, se.a8, se.a9, se.a10, se.a11, se.a12, se.a13, se.a14, se.a15, se.a16, se.a17, se.a18, se.a19, se.a20
+				From PROF_EXAMS pe, CS_QUESTION_ANSWER_PAIRS qap, QUESTION_BANK qb, STUDENT_EXAMS se
+				Where qap.questionID = qb.id AND se.prof_exams_ID = pe.id AND(pe.QAP1 = qap.id or pe.QAP2 = qap.id or pe.QAP3 = qap.id or pe.QAP4 = qap.id or pe.QAP5 = qap.id or pe.QAP6 = qap.id or pe.QAP7 = qap.id or pe.QAP8 = qap.id or pe.QAP9 = qap.id or pe.QAP10 = qap.id or pe.QAP11 = qap.id or pe.QAP12 = qap.id or pe.QAP13 = qap.id or pe.QAP14 = qap.id or pe.QAP15 = qap.id or pe.QAP16 = qap.id or pe.QAP17 = qap.id or pe.QAP18 = qap.id or pe.QAP19 = qap.id or pe.QAP20 = qap.id)
+			}
+			
+		}
+		else if (That exam does not appear in the exams that the student has already taken){
+			//return all of the questions for that exam
+			Select pe.professorID, pe.courseID, pe.examopentime, pe.examclosetime, pe.examduration, qap.typeID, qb.question, qb.id as questionID
+			From PROF_EXAMS pe, CS_QUESTION_ANSWER_PAIRS qap, QUESTION_BANK qb
+			Where qap.questionID = qb.id AND (pe.QAP1 = qap.id or pe.QAP2 = qap.id or pe.QAP3 = qap.id or pe.QAP4 = qap.id or pe.QAP5 = qap.id or pe.QAP6 = qap.id or pe.QAP7 = qap.id or pe.QAP8 = qap.id or pe.QAP9 = qap.id or pe.QAP10 = qap.id or pe.QAP11 = qap.id or pe.QAP12 = qap.id or pe.QAP13 = qap.id or pe.QAP14 = qap.id or pe.QAP15 = qap.id or pe.QAP16 = qap.id or pe.QAP17 = qap.id or pe.QAP18 = qap.id or pe.QAP19 = qap.id or pe.QAP20 = qap.id)
+			 
+			//Start a record for that exam
+			Insert into(prof_exams_ID, studentID,startTime) into STUDENT_EXAMS VALUES (prof_exams_IDVariable, studentIDVariable,startTimeVariable);
+		}
+	}
+	else{
+		echo the exam has expired;
+	}*/
 }
 
 
-//////////////////////////////////////
 
 ?>

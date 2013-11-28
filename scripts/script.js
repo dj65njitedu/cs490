@@ -116,32 +116,25 @@ $( document ).ready(function() {
 							var pos = $(this).attr("class");
 							if(pos == "crtr"){}
 							else{  
-								//alert(countProperties(this.cells[0]));  
-								/*customerID = "";
-								var text = $(this).html();
-								lastName = "";
-								firstName = "";
-								var zCount = 0;
-								for(var i = 0;i < 70; ++i){
-									if(text[i] == '>' ){
-										zCount++;
-										++i;
-									}
-								}
-								*/
-								var t = '';
+								var id = '';
 								var stopCapture = false;
 								for(var i = 0;i < this.innerHTML.length; ++i){
 									if((i > 3) && (stopCapture != true)){
 										if(this.innerHTML.charAt(i) != '<'){
-											t += this.innerHTML.charAt(i);
+											id += this.innerHTML.charAt(i);
 										}
 										if(this.innerHTML.charAt(i) == '<'){
 											stopCapture = true;
 										}
 									}
 								}
-								$("#rightPanel").html(t);
+								var ajaxRequest2 = $.ajax({
+								url:'?method=takeExamByID&param1='+ id + '&param2='+ username, 
+									success:function(){
+										$("#rightPanel").html(ajaxRequest2.responseText);
+									}
+
+								});								
 								
 							}
 						});
