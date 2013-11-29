@@ -131,7 +131,42 @@ $( document ).ready(function() {
 								var ajaxRequest2 = $.ajax({
 								url:'?method=takeExamByID&param1='+ id + '&param2='+ username, 
 									success:function(){
+										var result = ajaxRequest2.responseText;
+										var result2;
 										$("#rightPanel").html(ajaxRequest2.responseText);
+										if(result.length > 30){
+											var lastQuestionID;
+											var tableBuilder2 = '<div id="timer" style="font-weight:bold; font-size: 25px; position: fixed; left:55%; top:15px"></div><div ><table style="margin: 0 auto; width:1000px" border="1"><thead><tr class="crtr"><th>Question</th></tr></thead><tbody>';
+											result2 = JSON.parse(result);
+											result2[countProperties(result2)] =  {"questionID":"endOfObject"};
+											lastQuestionID = 1000;
+											var questionNum = 1;
+											for(var i = 0; i < countProperties(result2); ++i){
+												if(result2[i]['questionID'] == lastQuestionID){
+													tableBuilder2 +=  '<input type="radio" name="'+result2[i]['questionID']+'">' + result2[i]['answer'] + '<br></input>';
+													//alert(tableBuilder2);
+													if(result2[i+1]['questionID'] != lastQuestionID){
+														tableBuilder2 += '</form></td></tr>';
+													}
+												}else{
+													lastQuestionID = result2[i]['questionID'];
+													tableBuilder2 +=  '<tr class="examButtons"><td><form>'+result2[i]['question']+'?<br><input type="radio" name="'+result2[i]['questionID']+'">' + result2[i]['answer'] + '<br></input>';
+												}
+											}
+											tableBuilder2 += '</tbody></table></div>';
+											$("#rightPanel").html(tableBuilder2);
+											//alert(result2[0]['examduration'][3] + result2[0]['examduration'][4]);
+											hours = parseInt(result2[0]['examduration'][0] + result2[0]['examduration'][1]);
+											minutes = parseInt(result2[0]['examduration'][3] + result2[0]['examduration'][4]);
+											seconds = parseInt(result2[0]['examduration'][6] + result2[0]['examduration'][7]);
+											var time = (hours * 60 * 60) + (minutes * 60) + (seconds);
+											var timer = setInterval(function(){
+												$("#timer").html((new Date).clearTime().addSeconds(time).toString('H:mm:ss'));
+												--time;
+											},1000);
+											//alert(countProperties(result2));
+
+										}
 									}
 
 								});								

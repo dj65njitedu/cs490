@@ -266,3 +266,13 @@ font-family:cursive;
 	left:50%;
 	z-index:1000;
 }
+
+.arrow{
+	color:#ffcdb2;
+	text-align:right;
+	line-height:30px;
+	background:url(../images/right_arrow.png) 171px center no-repeat !important;
+	display:block;
+}
+
+

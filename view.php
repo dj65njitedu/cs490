@@ -44,6 +44,7 @@ global $userName, $loginMessage, $homePage, $inDBPage;
 		<head>
 			<link rel="stylesheet" type="text/css" href="css/style.css">
 			<script type="text/javascript" src="scripts/jquery.min.js"></script>
+			<script type="text/javascript" src="scripts/date.js"></script>
 			<script type="text/javascript" src="scripts/script.js"></script>			
 		</head>
 		<body>
@@ -117,7 +118,7 @@ global $userName, $loginMessage, $homePage, $inDBPage;
 						</div>
 					</div>
 					<div id="seeTest" class="button" >See Available Test</div>
-					<div id="seeTestDropDown"class="buttonDropDown"><br><br><br><b>Select and exam on the right-></b><br></div>
+					<div id="seeTestDropDown"class="buttonDropDown"><b >Select an exam on the right</b><span class="arrow">.</span><br></div>
 					<div id="seeHistory" class="button">See Past Test Results</div>
 					<div id="seeHistoryDropDown" class="buttonDropDown">Some dummy text<br>(data from the database will be populated in the main panel)</div>
 				</div>
