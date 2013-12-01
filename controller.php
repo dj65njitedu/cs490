@@ -153,9 +153,12 @@ function takeExamByID($ID, $username){
 					}
 				}
 				else{
-					//return all of the questions for that exam
-					echo file_get_contents('http://web.njit.edu/~dj65/cs490/dblogin3.php?method=getProfExamByAndQuestions&param1='.$ID.'&param2='.$username);	 
 					
+					//return all of the questions for that exam
+					echo file_get_contents('http://web.njit.edu/~dj65/cs490/dblogin3.php?method=getProfExamQuestions&param1='.$ID.'&param2='.$username);	
+					$userID = getIDFromUsername($username);
+					file_get_contents('http://web.njit.edu/~dj65/cs490/dblogin3.php?method=insertStudentExamIntialRecord&param1='.$ID.'&param2='.$userID);
+
 					//Start a record for that exam
 					//Insert into(prof_exams_ID, studentID,startTime) into STUDENT_EXAMS VALUES (prof_exams_IDVariable, studentIDVariable,startTimeVariable);
 				}
@@ -170,6 +173,12 @@ function takeExamByID($ID, $username){
 		echo 'error';
 	}
 	
+}
+
+function getIDFromUsername($username){
+	$result = file_get_contents('http://web.njit.edu/~dj65/cs490/dblogin3.php?method=getIDFromUsername&param1='.$username);
+	$jsonToPHPArrayResults = json_decode($result,true);
+	return $jsonToPHPArrayResults[0]['id'];
 }
 
 

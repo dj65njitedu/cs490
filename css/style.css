@@ -234,6 +234,7 @@ font-family:cursive;
 		color-stop(0.55, rgb(255,236,235)),
 		color-stop(0.78, rgb(247,235,234))
 	);
+	overflow:hidden;
 }
 
 #container #head2{

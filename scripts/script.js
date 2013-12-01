@@ -105,9 +105,18 @@ $( document ).ready(function() {
 							tableBuilder +=  '<tr class="examButtons">';
 							tableBuilder +=  '<td >'+result2[i]['id']+'</td>';
 							tableBuilder +=  '<td>'+result2[i]['cname']+'</td>';
-							tableBuilder +=  '<td>'+result2[i]['examopentime']+'</td>';
-							tableBuilder +=  '<td>'+result2[i]['examclosetime']+'</td>';
-							tableBuilder +=  '<td>'+result2[i]['examduration']+'</td>';
+							tableBuilder +=  '<td>'+formattedDate(result2[i]['examopentime'])+'</td>'; 
+							tableBuilder +=  '<td>'+formattedDate(result2[i]['examclosetime'])+'</td>';
+							var formattedHour = '00';
+							var formattedMinute = '00';
+							var formattedTime = result2[i]['examduration'];
+							if(result2[i]['examduration'][0] == '0' && result2[i]['examduration'][1] == '0'){
+								formattedTime = parseInt(result2[i]['examduration'][3] + result2[i]['examduration'][4]) + ' minutes';
+							}
+							else{
+								formattedTime = parseInt(result2[i]['examduration'][0] + result2[i]['examduration'][1]) + ' hours and '+ parseInt(result2[i]['examduration'][3] + result2[i]['examduration'][4]) + ' minutes'
+							}
+							tableBuilder +=  '<td>'+formattedTime+'</td>';
 							tableBuilder +=  '</tr>';	
 						}
 						tableBuilder += '</tbody></table></div>';
@@ -145,26 +154,75 @@ $( document ).ready(function() {
 												if(result2[i]['questionID'] == lastQuestionID){
 													tableBuilder2 +=  '<input type="radio" name="'+result2[i]['questionID']+'">' + result2[i]['answer'] + '<br></input>';
 													//alert(tableBuilder2);
-													if(result2[i+1]['questionID'] != lastQuestionID){
+													if(result2[i+1]['questionID'] != lastQuestionID && result2[i]['question'] != undefined){
 														tableBuilder2 += '</form></td></tr>';
 													}
 												}else{
 													lastQuestionID = result2[i]['questionID'];
-													tableBuilder2 +=  '<tr class="examButtons"><td><form>'+result2[i]['question']+'?<br><input type="radio" name="'+result2[i]['questionID']+'">' + result2[i]['answer'] + '<br></input>';
+													if(result2[i]['question'] != undefined){
+														tableBuilder2 +=  '<tr class="examButtons"><td><b>'+questionNum+'</b><br><form>'+result2[i]['question']+'?<br><input type="radio" name="'+result2[i]['questionID']+'">' + result2[i]['answer'] + '<br></input>';
+														questionNum++;
+													}
 												}
 											}
-											tableBuilder2 += '</tbody></table></div>';
+											tableBuilder2 += '<tr class="examButtons"><td><button style="padding:20px"><b>Submit Exam</b></button></td></tr></tbody></table></div>';
 											$("#rightPanel").html(tableBuilder2);
 											//alert(result2[0]['examduration'][3] + result2[0]['examduration'][4]);
-											hours = parseInt(result2[0]['examduration'][0] + result2[0]['examduration'][1]);
-											minutes = parseInt(result2[0]['examduration'][3] + result2[0]['examduration'][4]);
-											seconds = parseInt(result2[0]['examduration'][6] + result2[0]['examduration'][7]);
-											var time = (hours * 60 * 60) + (minutes * 60) + (seconds);
-											var timer = setInterval(function(){
-												$("#timer").html((new Date).clearTime().addSeconds(time).toString('H:mm:ss'));
-												--time;
-											},1000);
-											//alert(countProperties(result2));
+												var year = parseInt(result2[0]['examduration'][0] + result2[0]['examduration'][1]);
+												var month = parseInt(result2[0]['examduration'][0] + result2[0]['examduration'][1]);
+												var day = parseInt(result2[0]['examduration'][0] + result2[0]['examduration'][1]);
+												var hours = parseInt(result2[0]['examduration'][0] + result2[0]['examduration'][1]);
+												var minutes = parseInt(result2[0]['examduration'][3] + result2[0]['examduration'][4]);
+												var seconds = parseInt(result2[0]['examduration'][6] + result2[0]['examduration'][7]);
+												var duration = (hours * 60 * 60) + (minutes * 60) + (seconds);
+												
+											if(result2[0]['starttime'] != undefined ){
+												//alert((result2[0]['examduration'][11] + result2[0]['examduration'][12]) +':'+ (result2[0]['examduration'][14] + result2[0]['examduration'][15]) +':'+(result2[0]['examduration'][17] + result2[0]['examduration'][18]));
+												var year3 = parseInt(result2[0]['examclosetime'][0] + result2[0]['examclosetime'][1] + result2[0]['examclosetime'][2] + result2[0]['examclosetime'][3]);
+												var month3 = parseInt(result2[0]['examclosetime'][5] + result2[0]['examclosetime'][6]);
+												var day3 = parseInt(result2[0]['examclosetime'][8] + result2[0]['examclosetime'][9]);												
+												var hours3 = parseInt(result2[0]['examclosetime'][11] + result2[0]['examclosetime'][12]);
+												var minutes3 = parseInt(result2[0]['examclosetime'][14] + result2[0]['examclosetime'][15]);
+												var seconds3 = parseInt(result2[0]['examclosetime'][17] + result2[0]['examclosetime'][18]);
+												var examCloseTime = (year3 * 12 * 30 * 24 * 60 * 60) + (month3 * 30 * 24 * 60 * 60) + (day3 * 24 * 60 * 60) + (hours3 * 60 * 60) + (minutes3 * 60) + (seconds3);
+
+												var year4 = parseInt(result2[0]['currenttime'][0] + result2[0]['currenttime'][1] + result2[0]['currenttime'][2] + result2[0]['currenttime'][3]);
+												var month4 = parseInt(result2[0]['currenttime'][5] + result2[0]['currenttime'][6]);
+												var day4 = parseInt(result2[0]['currenttime'][8] + result2[0]['currenttime'][9]);												
+												var hours4 = parseInt(result2[0]['currenttime'][11] + result2[0]['currenttime'][12]);
+												var minutes4 = parseInt(result2[0]['currenttime'][14] + result2[0]['currenttime'][15]);
+												var seconds4 = parseInt(result2[0]['currenttime'][17] + result2[0]['currenttime'][18]);
+												var currentTime = (year4 * 12 * 30 * 24 * 60 * 60) + (month4 * 30 * 24 * 60 * 60) + (day4 * 24 * 60 * 60) + (hours4 * 60 * 60) + (minutes4 * 60) + (seconds4);		
+
+												var year5 = parseInt(result2[0]['starttime'][0] + result2[0]['starttime'][1] + result2[0]['currenttime'][2] + result2[0]['currenttime'][3]);
+												var month5 = parseInt(result2[0]['starttime'][5] + result2[0]['starttime'][6]);
+												var day5 = parseInt(result2[0]['starttime'][8] + result2[0]['starttime'][9]);												
+												var hours5 = parseInt(result2[0]['starttime'][11] + result2[0]['starttime'][12]);
+												var minutes5 = parseInt(result2[0]['starttime'][14] + result2[0]['starttime'][15]);
+												var seconds5 = parseInt(result2[0]['starttime'][17] + result2[0]['starttime'][18]);
+												var startTime = (year5 * 12 * 30 * 24 * 60 * 60) + (month5 * 30 * 24 * 60 * 60) + (day5 * 24 * 60 * 60) + (hours5 * 60 * 60) + (minutes5 * 60) + (seconds5);													
+												//alert("duration=" + duration + "<br>(examCloseTime-currentTime)=" + (examCloseTime - currentTime));
+												var smallestDuration;
+												if((examCloseTime - currentTime) < duration){
+													smallestDuration = (examCloseTime - currentTime);
+													//alert("examClosetime = "+examCloseTime+"<br><br>currentTime = "+currentTime+"<br><br>(examCloseTime - currentTime) = "+(examCloseTime - currentTime)+"<br><br>Duration= "+duration);
+												}
+												else{
+													smallestDuration = duration - (currentTime - startTime);
+												}
+												var timer = setInterval(function(){
+													$("#timer").html((new Date).clearTime().addSeconds(smallestDuration).toString('H:mm:ss'));
+													--smallestDuration;
+												},1000);
+											}
+											else{
+											
+												var timer = setInterval(function(){
+													$("#timer").html((new Date).clearTime().addSeconds(duration).toString('H:mm:ss'));
+													--duration;
+												},1000);
+												//alert(countProperties(result2));
+											}
 
 										}
 									}
@@ -319,6 +377,10 @@ function htmlEncoder(someString){
 		}
 	}
 	return encodeURIComponent(returnString);
+}
+
+function formattedDate(dateString){
+	return Date.parse(dateString).toString("dddd, MMMM dd, yyyy h:mm:ss tt");
 }
 
 //Ajax template
