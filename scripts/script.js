@@ -2,6 +2,7 @@
 var runOnce = false;
 var username;
 var openEnded;
+var timer;
 
 $( document ).ready(function() {
 	$("#loading").hide();
@@ -140,6 +141,8 @@ $( document ).ready(function() {
 								var ajaxRequest2 = $.ajax({
 								url:'?method=takeExamByID&param1='+ id + '&param2='+ username, 
 									success:function(){
+										var questionAnswerPairs = new Array();
+										var questionNum;
 										var result = ajaxRequest2.responseText;
 										var result2;
 										$("#rightPanel").html(ajaxRequest2.responseText);
@@ -149,10 +152,10 @@ $( document ).ready(function() {
 											result2 = JSON.parse(result);
 											result2[countProperties(result2)] =  {"questionID":"endOfObject"};
 											lastQuestionID = 1000;
-											var questionNum = 1;
+											questionNum = 1;
 											for(var i = 0; i < countProperties(result2); ++i){
 												if(result2[i]['questionID'] == lastQuestionID){
-													tableBuilder2 +=  '<input type="radio" name="'+result2[i]['questionID']+'">' + result2[i]['answer'] + '<br></input>';
+													tableBuilder2 +=  '<input type="radio" value="'+result2[i]['answerID']+'" name="'+result2[i]['questionID']+'">' + result2[i]['answer'] + '<br></input>';
 													//alert(tableBuilder2);
 													if(result2[i+1]['questionID'] != lastQuestionID && result2[i]['question'] != undefined){
 														tableBuilder2 += '</form></td></tr>';
@@ -160,13 +163,15 @@ $( document ).ready(function() {
 												}else{
 													lastQuestionID = result2[i]['questionID'];
 													if(result2[i]['question'] != undefined){
-														tableBuilder2 +=  '<tr class="examButtons"><td><b>'+questionNum+'</b><br><form>'+result2[i]['question']+'?<br><input type="radio" name="'+result2[i]['questionID']+'">' + result2[i]['answer'] + '<br></input>';
+														tableBuilder2 +=  '<tr class="examButtons"><td><b>'+questionNum+'</b><br><form id="'+questionNum+'">'+result2[i]['question']+'?<br><input type="radio" value="'+result2[i]['answerID']+'" name="'+result2[i]['questionID']+'">' + result2[i]['answer'] + '<br></input>';
+														questionAnswerPairs[questionNum] = result2[i]['questionID'];
 														questionNum++;
 													}
 												}
 											}
-											tableBuilder2 += '<tr class="examButtons"><td><button style="padding:20px"><b>Submit Exam</b></button></td></tr></tbody></table></div>';
+											tableBuilder2 += '<tr class="examButtons"><td><button style="padding:20px" id="submitExam"><b>Submit Exam</b></button></td></tr></tbody></table></div>';
 											$("#rightPanel").html(tableBuilder2);
+											
 											//alert(result2[0]['examduration'][3] + result2[0]['examduration'][4]);
 												var year = parseInt(result2[0]['examduration'][0] + result2[0]['examduration'][1]);
 												var month = parseInt(result2[0]['examduration'][0] + result2[0]['examduration'][1]);
@@ -210,20 +215,101 @@ $( document ).ready(function() {
 												else{
 													smallestDuration = duration - (currentTime - startTime);
 												}
-												var timer = setInterval(function(){
-													$("#timer").html((new Date).clearTime().addSeconds(smallestDuration).toString('H:mm:ss'));
+												timer = setInterval(function(){
 													--smallestDuration;
+													if(smallestDuration >= 0){
+														$("#timer").html((new Date).clearTime().addSeconds(smallestDuration).toString('H:mm:ss'));
+													}
+													
+													if(smallestDuration <= 0){
+															var innerString = "?method=submitExam&param1="+id+"&param2="+username;
+															var param = 3; 
+															for(var i = 1; i < questionNum; ++i){
+												
+																innerString += "&param"+(param) + "=" + questionAnswerPairs[i];
+																++param;
+																innerString += "&param"+(param) + "=" + $("#"+i+" input:radio:checked").val();
+																++param;
+															}
+																var ajaxRequest4 = $.ajax({
+																	url:innerString, 
+																	success:function(){
+																	//result = JSON.parse(ajaxRequest3.responseText);
+																		//alert(innerString);
+																		//alert(ajaxRequest4.responseText);
+																		//$("#rightPanel").html(innerString);
+																		window.location.href = "";
+																		
+																	}
+																});
+																clearInterval( timer);
+													}
 												},1000);
 											}
 											else{
 											
-												var timer = setInterval(function(){
-													$("#timer").html((new Date).clearTime().addSeconds(duration).toString('H:mm:ss'));
+												timer = setInterval(function(){
 													--duration;
+													if(duration >= 0 ){
+														$("#timer").html((new Date).clearTime().addSeconds(duration).toString('H:mm:ss'));
+													}
+													
+													
+													if(duration <= 0){
+															var innerString = "?method=submitExam&param1="+id+"&param2="+username;
+															var param = 3; 
+															for(var i = 1; i < questionNum; ++i){
+												
+																innerString += "&param"+(param) + "=" + questionAnswerPairs[i];
+																++param;
+																innerString += "&param"+(param) + "=" + $("#"+i+" input:radio:checked").val();
+																++param;
+															}
+																var ajaxRequest4 = $.ajax({
+																	url:innerString, 
+																	success:function(){
+																	//result = JSON.parse(ajaxRequest3.responseText);
+																		//alert(innerString);
+																		//alert(ajaxRequest4.responseText);
+																		//$("#rightPanel").html(innerString);
+																		window.location.href = "";
+																		
+																	}
+																});
+																clearInterval( timer);
+													}
 												},1000);
 												//alert(countProperties(result2));
 											}
-
+											
+											$('#submitExam').click(function(){
+												var answer = confirm("Submit now?");
+												if(answer){
+													clearInterval(timer);
+													//alert($("#1 input:radio:checked").val());
+													var innerString = "?method=submitExam&param1="+id+"&param2="+username;
+													var param = 3; 
+													for(var i = 1; i < questionNum; ++i){
+										
+														innerString += "&param"+(param) + "=" + questionAnswerPairs[i];
+														++param;
+														innerString += "&param"+(param) + "=" + $("#"+i+" input:radio:checked").val();
+														++param;
+													}
+													//alert(innerString);
+																var ajaxRequest3 = $.ajax({
+																	url:innerString, 
+																	success:function(){
+																	//result = JSON.parse(ajaxRequest3.responseText);
+																		//alert(innerString);
+																		//alert(ajaxRequest3.responseText);
+																		//$("#rightPanel").html(innerString);
+																		window.location.href = "";
+																		
+																	}
+																});
+												}
+											});
 										}
 									}
 
