@@ -85,7 +85,11 @@ function getUserRole($param){
 } 
 
 function returnCourses(){
-	echo file_get_contents($GLOBALS['dbServerAddress'].'?method=returnCourses');
+	echo file_get_contents('http://web.njit.edu/~dj65/cs490/dblogin3.php?method=returnCourses');
+}
+
+function getQuestionsAndAnswersByCourseID($id){
+	echo file_get_contents('http://web.njit.edu/~dj65/cs490/dblogin3.php?method=getQuestionsAndAnswersByCourseID'.'&param1='.$id);
 }
 
 function compiler($someCode){

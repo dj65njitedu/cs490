@@ -123,8 +123,8 @@ global $userName, $loginMessage, $homePage, $inDBPage;
 					<div id="seeHistoryDropDown" class="buttonDropDown">Some dummy text<br>(data from the database will be populated in the main panel)</div>
 				</div>
 				<div id="rightPanel" class="roundBorder">
-					<div style="left:35%;top:35%;opacity:0.1;filter:alpha(opacity=10);position:absolute;z-index:103"><img src="images/flag.gif"></img></div>
-					<div style="left:35%;top:35%;opacity:0.8;filter:alpha(opacity=80);position:absolute;z-index:101"><img src="images/njit.jpg"></img></div>
+					<div id="flag" style="left:35%;top:35%;opacity:0.1;filter:alpha(opacity=10);position:absolute;z-index:103"><img src="images/flag.gif"></img></div>
+					<div id="flag2" style="left:35%;top:35%;opacity:0.8;filter:alpha(opacity=80);position:absolute;z-index:101"><img src="images/njit.jpg"></img></div>
 				</div>
 			</div>
 			<input id="hiddenUserName" type="hidden" value="'.$userName.'"></input>

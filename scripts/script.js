@@ -19,7 +19,7 @@ $( document ).ready(function() {
 			
 			var htmlCourseBuilder;
 			//This string will be built from results from the server (in this case the results are simulated)				
-			htmlCourseBuilder = '<div id="courseSelect"><table><tr><td>Choose the desired course</td></tr><tr><td><select>';
+			htmlCourseBuilder = '<div id="courseSelect"><table><tr><td>Choose the desired course</td></tr><tr><td><select id="addQuestionsSelect">';
 			
 			var ajaxRequest = $.ajax({
 				url:'?method=returnCourses', 
@@ -29,13 +29,18 @@ $( document ).ready(function() {
 					//alert(result[0]['username']);
 					for(var i = 0;i < countProperties(result);++i){
 						//alert(result[i]['cname']);
-						htmlCourseBuilder += '<option value="'+result[i]['cname']+'">'+result[i]['cname']+'</option>';
+						htmlCourseBuilder += '<option value="'+result[i]['cid']+'">'+result[i]['cname']+'</option>';
 					}
 					htmlCourseBuilder += '</select></td></tr></table></div><br>';
 					if(runOnce == false){
 						$('#multipleChoice').prepend(htmlCourseBuilder);
+						getQuestionsAndAnswersByCourseID($('#addQuestionsSelect').val());
 						runOnce = true;
 					}
+					$('#addQuestionsSelect').change(function(){
+						//alert($('#addQuestionsSelect').val());
+						getQuestionsAndAnswersByCourseID($('#addQuestionsSelect').val());
+					});
 				}
 			});
 		}		
@@ -58,7 +63,7 @@ $( document ).ready(function() {
 					//alert(result[0]['username']);
 					for(var i = 0;i < countProperties(result);++i){
 						//alert(result[i]['cname']);
-						makeTestHtml += '<option value="'+result[i]['cname']+'">'+result[i]['cname']+'</option>';
+						makeTestHtml += '<option value="'+result[i]['cid']+'">'+result[i]['cname']+'</option>';
 					}
 					makeTestHtml += '</select></td></tr></table></div><br>';
 					$('#makeTestDropDown').html(makeTestHtml);
@@ -340,11 +345,13 @@ $( document ).ready(function() {
 	$("#mc").click(function(){
 		var multipleChoiceHtml = '<div id="multipleChoiceDiv" style="padding:20px"><table><tr><td>Enter Question Here</td><td><div><textarea cols="85"></textarea></div></td></tr><tr><td><br></td><td><br></td></tr><tr><td>Right Answer</td><td>Answer</td></tr><tr><td><input id="a" type="radio" name="multipleAnswer" value="a">A</td><td><textarea cols="85">Enter Answer Here</textarea></td></tr><tr><td><input id="b" type="radio" name="multipleAnswer" value="b">B</td><td><textarea cols="85">Enter Answer Here</textarea></td></tr><tr><td><input id="c" type="radio" name="multipleAnswer" value="c">C</td><td><textarea cols="85">Enter Answer Here</textarea></td></tr><tr><td><input id="d" type="radio" name="multipleAnswer" value="d">D</td><td><textarea cols="85">Enter Answer Here</textarea></td></tr><tr><td></td><td style="float:right"><input type="submit"></input></td></tr></table></div>';
 		$("#rightPanel").html(multipleChoiceHtml);
+		getQuestionsAndAnswersByCourseID($('#addQuestionsSelect').val());
 	});
 	
 	$("#tf").click(function(){
 		var trueOrFalseHtml = '<div id="trueOrFalseDiv" style="padding:20px"><table><tr><td>Enter Question Here</td><td><div><textarea cols="85"></textarea></div></td></tr><tr><td><br></td><td><br></td></tr><tr><td>Right Answer</td><td>Answer</td></tr><tr><td><input id="t" type="radio" name="multipleAnswer" value="t">True</td><td><textarea cols="85">Enter Answer Here</textarea></td></tr><tr><td><input id="f" type="radio" name="multipleAnswer" value="f">False</td><td><textarea cols="85">Enter Answer Here</textarea></td></tr><tr><td></td><td style="float:right"><input type="submit"></input></td></tr></table></div>';
 		$("#rightPanel").html(trueOrFalseHtml);	
+		getQuestionsAndAnswersByCourseID($('#addQuestionsSelect').val());
 	});
 	
 	$("#oe").click(function(){
@@ -374,6 +381,10 @@ $( document ).ready(function() {
 	});
  
 });
+
+
+
+//$('#dropDownId :selected').text();
 
 function allButtonsSlideUp(){
 		$("#addQuestionsDropDown").slideUp();
@@ -422,11 +433,61 @@ function getUserRole(){
 			});
 }
 
-function getQuestionsByCourse(course){
+
+
+function getQuestionsAndAnswersByCourseID(courseID){
 	var resultsAsHTML = "";
-	//Ajax call will use the course, get the results, build html from it, and return the html.
-	//the return clause will be in the AJAX success function 
-	//return resultsAsHTML;
+		var ajaxRequest2 = $.ajax({
+			url:'?method=getQuestionsAndAnswersByCourseID&param1='+ courseID, 
+				success:function(){
+					var questionAnswerPairs = new Array();
+					var questionNum;
+					var result = ajaxRequest2.responseText;
+					//alert(ajaxRequest2.responseText);
+					var result2;
+					//$("#rightPanel").html(ajaxRequest2.responseText);
+					$( "#rightPanel" ).find( "#flag, #flag2").remove();
+					var tableBuilder2 = "";
+					if(result.length > 30){
+						var lastQuestionID;
+						tableBuilder2 = '<div ><table style="margin: 0 auto; width:1000px" border="1"><thead><tr ><th>Question</th></tr></thead><tbody>';
+						result2 = JSON.parse(result);
+						result2[countProperties(result2)] =  {"questionID":"endOfObject"};
+						lastQuestionID = 1000;
+						questionNum = 1;
+						for(var i = 0; i < countProperties(result2); ++i){
+							if(result2[i]['questionID'] == lastQuestionID){
+								tableBuilder2 +=  result2[i]['answer'] + '<br>';
+								//alert(tableBuilder2);
+								if(result2[i+1]['questionID'] != lastQuestionID && result2[i]['question'] != undefined){
+									tableBuilder2 += '</form></td></tr>';
+								}
+							}else{
+								lastQuestionID = result2[i]['questionID'];
+								if(result2[i]['question'] != undefined){
+									tableBuilder2 +=  '<tr class="examButtons"><td>'+questionNum+'<br><form id="'+questionNum+'"><b>'+result2[i]['question']+'?</b><br>'+result2[i]['answer'] + '<br>';
+									questionAnswerPairs[questionNum] = result2[i]['questionID'];
+									questionNum++;
+								}
+							}
+						}
+						tableBuilder2 += '</tbody></table></div>';
+
+					}
+					if($('#mc:checked').val() != undefined){
+						var multipleChoiceHtml = '<div id="multipleChoiceDiv" style="padding:20px"><table><tr><td>Enter Question Here</td><td><div><textarea cols="85"></textarea></div></td></tr><tr><td><br></td><td><br></td></tr><tr><td>Right Answer</td><td>Answer</td></tr><tr><td><input id="a" type="radio" name="multipleAnswer" value="a">A</td><td><textarea cols="85">Enter Answer Here</textarea></td></tr><tr><td><input id="b" type="radio" name="multipleAnswer" value="b">B</td><td><textarea cols="85">Enter Answer Here</textarea></td></tr><tr><td><input id="c" type="radio" name="multipleAnswer" value="c">C</td><td><textarea cols="85">Enter Answer Here</textarea></td></tr><tr><td><input id="d" type="radio" name="multipleAnswer" value="d">D</td><td><textarea cols="85">Enter Answer Here</textarea></td></tr><tr><td></td><td style="float:right"><input type="submit"></input></td></tr></table></div>';
+						$("#rightPanel").html(multipleChoiceHtml);
+						$("#rightPanel").append(tableBuilder2);						
+					}else if($('#tf:checked').val() != undefined){
+						var trueOrFalseHtml = '<div id="trueOrFalseDiv" style="padding:20px"><table><tr><td>Enter Question Here</td><td><div><textarea cols="85"></textarea></div></td></tr><tr><td><br></td><td><br></td></tr><tr><td>Right Answer</td><td>Answer</td></tr><tr><td><input id="t" type="radio" name="multipleAnswer" value="t">True</td><td><textarea cols="85">Enter Answer Here</textarea></td></tr><tr><td><input id="f" type="radio" name="multipleAnswer" value="f">False</td><td><textarea cols="85">Enter Answer Here</textarea></td></tr><tr><td></td><td style="float:right"><input type="submit"></input></td></tr></table></div>';
+						$("#rightPanel").html(trueOrFalseHtml);	
+						$("#rightPanel").append(tableBuilder2);
+					}
+					else{
+						$("#rightPanel").append(tableBuilder2);
+					}
+				}
+			});
 }
 
 function countProperties(obj) {
