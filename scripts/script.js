@@ -3,6 +3,7 @@ var runOnce = false;
 var username;
 var openEnded;
 var timer;
+var multipleChoiceHtml = '<div id="multipleChoiceDiv" style="padding:20px"><table id="radioTable"><tr><td>Enter Question Here</td><td><div><textarea cols="85" id="mq"></textarea></div></td></tr><tr><td><br></td><td><br></td></tr><tr><td>Right Answer</td><td>Answer</td></tr><tr id="a"><td><input type="radio" name="multipleAnswer" value="a">A</td><td><textarea id="aa" cols="85">Enter Answer Here</textarea></td></tr><tr id="b"><td><input type="radio" name="multipleAnswer" value="b">B</td><td><textarea cols="85" id="ba">Enter Answer Here</textarea></td></tr><tr id="c"><td><input type="radio" name="multipleAnswer" value="c">C</td><td><textarea cols="85" id="ca">Enter Answer Here</textarea></td></tr><tr><td id="d"><input type="radio" name="multipleAnswer" value="d">D</td><td><textarea cols="85" id="da">Enter Answer Here</textarea></td></tr><tr><td></td><td style="float:right"><input id="submitQAP" type="submit"></input></td></tr></table></div>';
 
 $( document ).ready(function() {
 	$("#loading").hide();
@@ -343,9 +344,12 @@ $( document ).ready(function() {
 	});
 	
 	$("#mc").click(function(){
-		var multipleChoiceHtml = '<div id="multipleChoiceDiv" style="padding:20px"><table><tr><td>Enter Question Here</td><td><div><textarea cols="85"></textarea></div></td></tr><tr><td><br></td><td><br></td></tr><tr><td>Right Answer</td><td>Answer</td></tr><tr><td><input id="a" type="radio" name="multipleAnswer" value="a">A</td><td><textarea cols="85">Enter Answer Here</textarea></td></tr><tr><td><input id="b" type="radio" name="multipleAnswer" value="b">B</td><td><textarea cols="85">Enter Answer Here</textarea></td></tr><tr><td><input id="c" type="radio" name="multipleAnswer" value="c">C</td><td><textarea cols="85">Enter Answer Here</textarea></td></tr><tr><td><input id="d" type="radio" name="multipleAnswer" value="d">D</td><td><textarea cols="85">Enter Answer Here</textarea></td></tr><tr><td></td><td style="float:right"><input type="submit"></input></td></tr></table></div>';
 		$("#rightPanel").html(multipleChoiceHtml);
 		getQuestionsAndAnswersByCourseID($('#addQuestionsSelect').val());
+		$("#submitQAP").click(function(){
+			//alert($("#radioTable input:radio:checked").val());
+			submitQAP();
+		});
 	});
 	
 	$("#tf").click(function(){
@@ -383,8 +387,51 @@ $( document ).ready(function() {
 });
 
 
+function submitQAP(){
+	var courseID = $('#addQuestionsSelect').val();
+	var mQuestion = $("#mq").val();
+	var rightAnswer;
+	var otherAnswer1;
+	var otherAnswer2;
+	var otherAnswer3;
+	
+	if($("#radioTable input:radio:checked").val() == 'a'){
+		rightAnswer = $("#aa").val();
+		otherAnswer1 = $("#ba").val();
+		otherAnswer2 = $("#ca").val();
+		otherAnswer3 = $("#da").val();
+	}else if($("#radioTable input:radio:checked").val() == 'b'){
+		rightAnswer = $("#ba").val();
+		otherAnswer1 = $("#aa").val();
+		otherAnswer2 = $("#ca").val();
+		otherAnswer3 = $("#da").val();
+	
+	}else if($("#radioTable input:radio:checked").val() == 'c'){
+		rightAnswer = $("#ca").val();
+		otherAnswer1 = $("#ba").val();
+		otherAnswer2 = $("#aa").val();
+		otherAnswer3 = $("#da").val();
+	
+	}else if($("#radioTable input:radio:checked").val() == 'd'){
+		rightAnswer = $("#da").val();
+		otherAnswer1 = $("#ba").val();
+		otherAnswer2 = $("#ca").val();
+		otherAnswer3 = $("#aa").val();
+	}
+	//alert("rightanswer: "+ rightAnswer + "<br>" + "otheranswer: "+ otherAnswer1 + "<br>" +"otheranswer2: "+ otherAnswer2 + "<br>" + "otheranswer3: "+ otherAnswer3 + "<br>");
+	
+	var ajaxRequest6 = $.ajax({
+		url:'?method=insertMultiChoiceQuestion&param1='+courseID+'&param2='+htmlEncoder(mQuestion)+'&param3='+htmlEncoder(rightAnswer)+'&param4='+htmlEncoder(otherAnswer1)+'&param5='+htmlEncoder(otherAnswer2)+'&param6='+htmlEncoder(otherAnswer3), 
+		success:function(){
+		//result = JSON.parse(ajaxRequest6.responseText);
+			//alert(ajaxRequest6.responseText);
+			//alert(result[0]['username']);
+			getQuestionsAndAnswersByCourseID($('#addQuestionsSelect').val());
+		}
+	});
+	
+}
 
-//$('#dropDownId :selected').text();
 
 function allButtonsSlideUp(){
 		$("#addQuestionsDropDown").slideUp();
@@ -450,7 +497,7 @@ function getQuestionsAndAnswersByCourseID(courseID){
 					var tableBuilder2 = "";
 					if(result.length > 30){
 						var lastQuestionID;
-						tableBuilder2 = '<div ><table style="margin: 0 auto; width:1000px" border="1"><thead><tr ><th>Question</th></tr></thead><tbody>';
+						tableBuilder2 = '<div ><table style="margin: 0 auto; width:1000px" border="1"><thead><tr ></tr></thead><tbody>'; 
 						result2 = JSON.parse(result);
 						result2[countProperties(result2)] =  {"questionID":"endOfObject"};
 						lastQuestionID = 1000;
@@ -475,9 +522,12 @@ function getQuestionsAndAnswersByCourseID(courseID){
 
 					}
 					if($('#mc:checked').val() != undefined){
-						var multipleChoiceHtml = '<div id="multipleChoiceDiv" style="padding:20px"><table><tr><td>Enter Question Here</td><td><div><textarea cols="85"></textarea></div></td></tr><tr><td><br></td><td><br></td></tr><tr><td>Right Answer</td><td>Answer</td></tr><tr><td><input id="a" type="radio" name="multipleAnswer" value="a">A</td><td><textarea cols="85">Enter Answer Here</textarea></td></tr><tr><td><input id="b" type="radio" name="multipleAnswer" value="b">B</td><td><textarea cols="85">Enter Answer Here</textarea></td></tr><tr><td><input id="c" type="radio" name="multipleAnswer" value="c">C</td><td><textarea cols="85">Enter Answer Here</textarea></td></tr><tr><td><input id="d" type="radio" name="multipleAnswer" value="d">D</td><td><textarea cols="85">Enter Answer Here</textarea></td></tr><tr><td></td><td style="float:right"><input type="submit"></input></td></tr></table></div>';
 						$("#rightPanel").html(multipleChoiceHtml);
-						$("#rightPanel").append(tableBuilder2);						
+						$("#rightPanel").append(tableBuilder2);	
+						$("#submitQAP").click(function(){
+							//alert($("#radioTable input:radio:checked").val());
+							submitQAP();
+						});
 					}else if($('#tf:checked').val() != undefined){
 						var trueOrFalseHtml = '<div id="trueOrFalseDiv" style="padding:20px"><table><tr><td>Enter Question Here</td><td><div><textarea cols="85"></textarea></div></td></tr><tr><td><br></td><td><br></td></tr><tr><td>Right Answer</td><td>Answer</td></tr><tr><td><input id="t" type="radio" name="multipleAnswer" value="t">True</td><td><textarea cols="85">Enter Answer Here</textarea></td></tr><tr><td><input id="f" type="radio" name="multipleAnswer" value="f">False</td><td><textarea cols="85">Enter Answer Here</textarea></td></tr><tr><td></td><td style="float:right"><input type="submit"></input></td></tr></table></div>';
 						$("#rightPanel").html(trueOrFalseHtml);	

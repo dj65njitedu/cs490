@@ -1,6 +1,7 @@
 <?php
 //Author: Desmond Johnson CS:490 Date: 10/12/13
-
+//ini_set('display_errors',1); 
+ //error_reporting(E_ALL);
 $resultsArray = Array();
 $dbServerAddress = 'http://web.njit.edu/~cem6/dblogin3.php';
 
@@ -89,7 +90,7 @@ function returnCourses(){
 }
 
 function getQuestionsAndAnswersByCourseID($id){
-	echo file_get_contents('http://web.njit.edu/~dj65/cs490/dblogin3.php?method=getQuestionsAndAnswersByCourseID'.'&param1='.$id);
+	echo file_get_contents('http://web.njit.edu/~dj65/cs490/dblogin3.php?method=getQuestionsAndAnswersByCourseID&param1='.$id);
 }
 
 function compiler($someCode){
@@ -286,6 +287,11 @@ function getIDFromUsername($username){
 	$result = file_get_contents('http://web.njit.edu/~dj65/cs490/dblogin3.php?method=getIDFromUsername&param1='.$username);
 	$jsonToPHPArrayResults = json_decode($result,true);
 	return $jsonToPHPArrayResults[0]['id'];
+}
+
+function insertMultiChoiceQuestion($courseID, $question, $rightAnswer, $otherAnswer1, $otherAnswer2, $otherAnswer3){
+	//file_get_contents('http://web.njit.edu/~dj65/cs490/dblogin3.php?method=insertMultiChoiceQuestion&param1='.$question.'&param2='.$rightAnswer.'&param3='.$otherAnswer1.'&param4='.$otherAnswer2.'&param5='.$otherAnswer3);
+	file_get_contents('http://web.njit.edu/~dj65/cs490/dblogin3.php?method=insertMultiChoiceQuestion&param1='.$courseID.'&param2='.$question.'&param3='.$rightAnswer.'&param4='.$otherAnswer1.'&param5='.$otherAnswer2.'&param6='.$otherAnswer3);
 }
 
 

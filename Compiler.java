@@ -11,13 +11,14 @@ public class Compiler {
 		String returnMessage = "";
 		PrintWriter writer;
 		try {
-			String preCode = "public class sourceCode { public static void main(String[] args) {";
-			String endCode = "}}";
+			//String preCode = "public class sourceCode { public static void main(String[] args) { System.out.println(" + args[1] + "("+args[2]+","+args[3]+"));} public static ";
+			String preCode = "public class sourceCode { public static void main(String[] args) { System.out.println(" + args[1] + "("+args[2]+","+args[3]+"));} public static ";
+			String endCode = "}";
 			
 			writer = new PrintWriter("/afs/cad/u/d/j/dj65/public_html/cs490/output/sourceCode.java", "UTF-8");
 			writer.println(preCode);
 			writer.println(args[0]); 
-			writer.println(endCode);
+			writer.println(endCode); 
 			writer.close();
 			
 			Runtime rt = Runtime.getRuntime();

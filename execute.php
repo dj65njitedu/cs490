@@ -1,5 +1,6 @@
 <?php
-
+//ini_set('display_errors',1); 
+//error_reporting(E_ALL);
 //Sample code that is not being used
 $code = '
 String newString = "someText";
@@ -37,7 +38,8 @@ else{
 //Compiles the code passed to it. If it has an error message it will be returned, 
 //otherwise the compiled program will be ran and the results will be returned
 function compiler($someCode){
-	return '<pre>'.shell_exec('java Compiler '.'\''.$someCode.'\'').'</pre>';
+	//return "<pre>".shell_exec("java Compiler "."\"".$someCode."\" runNow 2 3")."</pre>";
+	return "<pre>".shell_exec("ps")."</pre>";
 }
 
 //Reads files directly from the server. Outputs their content to the screen
